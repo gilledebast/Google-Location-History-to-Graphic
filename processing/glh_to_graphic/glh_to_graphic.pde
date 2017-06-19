@@ -46,7 +46,7 @@ PShape[] path = new PShape[nbPath];
 
 void setup() {
   //size(500, 500, P3D);
-  size(400, 400, PDF, "julien_test_glh.pdf");
+  size(400, 400, PDF, "pierre_test_glh_log.pdf");
   
   background(255);
   
@@ -149,7 +149,7 @@ void create_shape(int id, int amplitude, int frequence, int c){
   float x = 0;
   // Calculate the path as a sine wave
   for (float a = 0; a < TWO_PI*4; a += 0.1) {
-    path[id].vertex(x,sin(a)*amplitude);
+    path[id].vertex(log(x),sin(log(a))*amplitude);
     x+= frequence;
   }
   // Don't "CLOSE" a shape if you want it to be a path
