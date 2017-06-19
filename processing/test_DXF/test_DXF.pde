@@ -9,6 +9,9 @@
  */
 
 import processing.dxf.*; // Import the DXF library
+
+import processing.pdf.*;
+
 boolean record;
 //PShape path;
 
@@ -21,38 +24,48 @@ PShape[] path = new PShape[nbPath];
 
 void setup(){
   background(255);
-  size(500,500,P3D);
   
+  //size(500,500,P3D);
+   size(400, 400, PDF, "julien_test.pdf");
+   
   smooth();
   
-  for(int id = 0; id < nbPath; id++){
-    create_shape(id,int(random(1,10)),int(random(1,3)),int(random(0,255)));
-  }
+  frameRate(1);
+  
+  //for(int id = 0; id < nbPath; id++){
+    //create_shape(id,int(random(1,10)),int(random(1,3)),int(random(0,255)));
+  //}
  
-  /*
-  create_shape(0,10,1,0);
-  create_shape(1,10,1,0);
-  create_shape(2,10,1,0);
-  */
+  
+  //create_shape(0,10,1,0);
+  //create_shape(1,10,1,0);
+  //create_shape(2,10,1,0);
+  
 }
 
 void draw() {
   if (record) {
-    beginRaw(DXF, "output.dxf");
+    beginRaw(DXF, "julien.dxf");
   }
   
+  //shape(path[0], random(0,100), random(0,height));
+  
   // Do all your drawing here
-  if (createPath){
+  //if (createPath){
     for(int id = 0; id < nbPath; id++){
+      create_shape(id,int(random(1,10)),int(random(1,3)),int(random(0,255)));
       shape(path[id], random(0,100), random(0,height));
     }
-    createPath = false;
-  }
+    
+    exit();
+    
+    //createPath = false;
+  //}
   
   if (record) {
     endRaw();
     record = false;
-    exit();
+    //exit();
   }
 }
 

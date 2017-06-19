@@ -8,11 +8,13 @@
  * ----------------------------------------------------------------------------------------------------
  */
 
-import processing.dxf.*; // Import the DXF library
-boolean record;
+//import processing.dxf.*; // Import the DXF library
+//boolean record;
+
+import processing.pdf.*;
 
 JSONArray GooglePositionHistory;
-String position_history_file = "gph_julien2.json";
+String position_history_file = "pierre.json";
 
 int tempo = 300;
 
@@ -37,9 +39,22 @@ int last_process;
 int last_latlong;
 int count = 1;
 
+ArrayList polygons;
+
+int nbPath = 318730; //GooglePositionHistory.size()-1;
+PShape[] path = new PShape[nbPath]; 
+
 void setup() {
-  size(500, 500, P3D);
-  background(0);
+  //size(500, 500, P3D);
+  size(400, 400, PDF, "julien_test_glh.pdf");
+  
+  background(255);
+  
+  smooth();
+  
+  //for(int id = 0; id < nbPath; id++){
+    //create_shape(id,int(random(1,10)),int(random(1,3)),int(random(0,255)));
+  //}
   
   //TODO Init GUI
   Position_to_graphic();
@@ -47,6 +62,7 @@ void setup() {
 
 void loop(){
   //TODO Update GUI when .json is loaded 
+  exit();
 }
 
 void Position_to_graphic(){
@@ -85,7 +101,7 @@ void Position_to_graphic(){
     latlong_to_midi = map(latlong, latlong_min, latlong_max, note_min, note_max);
 
     /*********************************/
-    
+     
     if(processTimestamp(timestampMs, lastTimestampMs) > 50){ // ICI ca supprime les petites notes < en dessous de 10ms
       
       process = processTimestamp(timestampMs, lastTimestampMs);
@@ -97,7 +113,10 @@ void Position_to_graphic(){
           /*******************/
           //DO SOMETHING
           /*******************/
-          create_shape();
+          
+          create_shape(i,accuracy,last_latlong/30,0);
+          shape(path[i], accuracy, process);
+          
           //width
           
           count++;
@@ -119,17 +138,21 @@ void Position_to_graphic(){
   }
 }
 
-void create_shape(){
+void create_shape(int id, int amplitude, int frequence, int c){
   
-  PShape path = createShape();
-  path.beginShape();
+  stroke(c);
+  noFill();
+  
+  path[id] = createShape();
+  path[id].beginShape();
+    
   float x = 0;
   // Calculate the path as a sine wave
-  for (float a = 0; a < TWO_PI; a += 0.1) {
-    path.vertex(x,sin(a)*100);
-    x+= 5;
+  for (float a = 0; a < TWO_PI*4; a += 0.1) {
+    path[id].vertex(x,sin(a)*amplitude);
+    x+= frequence;
   }
   // Don't "CLOSE" a shape if you want it to be a path
-  path.endShape();
+  path[id].endShape();
 
 }
