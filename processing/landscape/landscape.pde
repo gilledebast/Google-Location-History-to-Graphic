@@ -14,14 +14,29 @@ boolean doReDraw = true;
 
 void setup ()
 {
-  size (400, 400);
-  //size (400, 400, PDF, "test.pdf");
+  //size (400, 400);
+  size (400, 400, PDF, "test6.pdf");
   smooth();
+  
+  y = random (80, 150);
+
+    while (y < height+70)
+    {
+      setRandomValues ();
+      drawFilles();
+      drawLines();
+
+      y+= random (5, 70);
+    }
+
+    drawMargin();
+    
+    exit();
 }
 
 void draw ()
 {
-  if (doReDraw == true)
+  /*if (doReDraw == true)
   {
     background (bgColor);
 
@@ -39,7 +54,7 @@ void draw ()
     drawMargin();
 
     doReDraw = false;
-  }
+  }*/
 }
 
 void setRandomValues ()
@@ -62,12 +77,6 @@ void mousePressed ()
 {
   //exit();
   doReDraw = true; 
-}
-
-void keyPressed (){
-  if(key == 's'){
-    exit();
-  }
 }
 
 int time ()
