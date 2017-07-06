@@ -16,12 +16,12 @@ float[][] timestampMs_data = new float[nb_month][nb_days];
 
 //------- CONFIG LANDSCAPE ---------
 float y = 80;
-float amplitude = random (50, 80);
+//float amplitude = random (50, 80);
 float steps = 3;
-float timeSteps = 0.01;
+//float timeSteps = 0.01;
 float versatz = 10;
-float sw = random (0.5, 2);
-float strokeAlpha;
+//float sw = random (0.5, 2);
+//float strokeAlpha;
 color bgColor = 255;
 int margin = 30;
 
@@ -33,7 +33,7 @@ int j = 0;
 void setup ()
 {
   size (400, 400);
-  //size (400, 400, PDF, "test6.pdf");
+  //size (400, 400, PDF, "final2.pdf");
   smooth();
   
   generate_landscape();
@@ -98,18 +98,13 @@ void Position_to_landscape(){
 
 void setRandomValues ()
 {
-  noiseSeed ((int) random (100000));
-
-  sw = random (0.5, 2);
-
-  steps = random (sw*2, 6);
-  amplitude = random (40, 250);
-
-  timeSteps = random (0.01, 0.05);
-
+  //noiseSeed ((int) random (100000));
+  //sw = random (0.5, 2);
+  //steps = ;
+  //amplitude = random (40, 250);
+  //timeSteps = random (0.01, 0.05);
   versatz = random (-200, 200);
-
-  strokeAlpha = random (50, 200);
+  //strokeAlpha = random (50, 200);
 }
 
 void mousePressed ()
@@ -166,22 +161,22 @@ void drawFilles ()
 void drawLines (){
   
   noFill ();
-  strokeWeight (sw);
+  //strokeWeight (sw);
 
   float noiseValue;
   float x = -abs (versatz);
-  float time = 0.0;
+  //float time = 0.0;
 
   while (x < width + abs (versatz))
   {
     noiseValue = y - landscape_data[9][j]/300000*2;
-    strokeWeight (random (sw*0.5, sw*1.2));
-    stroke (random (strokeAlpha*0.8, strokeAlpha));
+    strokeWeight (accuracy_data[9][j]/50);
+    stroke (accuracy_data[9][j]/50);
 
-    line (x, noiseValue+3, x + random (versatz*0.9, versatz), noiseValue+3+height);
+    line (x, noiseValue+3, x + random (noiseValue*0.9, noiseValue), noiseValue+3+height);
 
-    x+= steps;
-    time += timeSteps;
+    x+= random(2,6);
+    //time += timeSteps;
   }
 }
 
