@@ -63,14 +63,11 @@ void generate_landscape(){
     setRandomValues ();
     
     drawFilles();
-    //drawLines();
+    drawLines();
     
     y+= accuracy_data[9][i+1]; //confidence moyen
   }
-  //drawMargin();
-  fill(255);
-  rect (0, 0, width, margin);
-  
+  drawMargin();
 }
 
 void Position_to_landscape(){
@@ -129,8 +126,8 @@ int time ()
 
 void drawFilles ()
 {
-  //fill (bgColor);
-  fill (random (50, 200));
+  fill (bgColor);
+  //fill (random (50, 200));
   noStroke();
 
   //float noiseValue;
@@ -166,11 +163,10 @@ void drawFilles ()
   endShape();
 }
 
-/*void drawLines ()
-{
+void drawLines (){
+  
   noFill ();
   strokeWeight (sw);
-
 
   float noiseValue;
   float x = -abs (versatz);
@@ -178,7 +174,7 @@ void drawFilles ()
 
   while (x < width + abs (versatz))
   {
-    noiseValue = y - noise (time)*amplitude;
+    noiseValue = y - landscape_data[9][j]/300000*2;
     strokeWeight (random (sw*0.5, sw*1.2));
     stroke (random (strokeAlpha*0.8, strokeAlpha));
 
@@ -198,4 +194,4 @@ void drawMargin ()
   rect (0, height, width, -margin);
   rect (0, 0, margin, height);
   rect (width, 0, -margin, height);
-}*/
+}
