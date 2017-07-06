@@ -7,21 +7,15 @@ String position_history_file = "pierre.json";
 String     timestampMs = "1489432985771";
 String lastTimestampMs = "1489432985771";
 
-int nb_month = 120000;
+int nb_month = 1000;
 int nb_days = 2000;
 int[][] landscape_data = new int[nb_month][nb_days];
-//int[][] latitude_data = new int[nb_month][nb_days];
+int[][] latitude_data = new int[nb_month][nb_days];
 int[][] accuracy_data = new int[nb_month][nb_days];
 float[][] timestampMs_data = new float[nb_month][nb_days];
 
 //------- CONFIG LANDSCAPE ---------
 float y = 80;
-//float amplitude = random (50, 80);
-float steps = 3;
-//float timeSteps = 0.01;
-float versatz = 10;
-//float sw = random (0.5, 2);
-//float strokeAlpha;
 color bgColor = 255;
 int margin = 30;
 
@@ -49,24 +43,22 @@ void draw (){
 
 void generate_landscape(){
   
-  //Delete old landscape when deReDraw
+  //Delete old landscape when doReDraw
   background(255);
   
   Position_to_landscape();
   
   // Y of the landscape base on >>>
-  //y = random (80, 150);
-  y = random (80, 150);
+  y = accuracy_data[9][0];
   
   while (y < height){
-    
-    setRandomValues ();
     
     drawFilles();
     drawLines();
     
-    y+= accuracy_data[9][i+1]; //confidence moyen
+    y+= accuracy_data[9][i+1];
   }
+  
   drawMargin();
 }
 
@@ -85,26 +77,13 @@ void Position_to_landscape(){
     
     timestampMs = locations.getString("timestampMs");
     
-    //println(day);
-    
     landscape_data[month][i] = longitude;
-    //latitude_data[month][i] = latitude;
+    latitude_data[month][i] = latitude;
     accuracy_data[month][i] = accuracy;
     timestampMs_data[month][i] = processTimestamp(timestampMs,lastTimestampMs);
     
     //lastTimestampMs = timestampMs;
   }
-}
-
-void setRandomValues ()
-{
-  //noiseSeed ((int) random (100000));
-  //sw = random (0.5, 2);
-  //steps = ;
-  //amplitude = random (40, 250);
-  //timeSteps = random (0.01, 0.05);
-  versatz = random (-200, 200);
-  //strokeAlpha = random (50, 200);
 }
 
 void mousePressed ()
@@ -114,43 +93,28 @@ void mousePressed ()
   j = 0;
 }
 
-int time ()
-{
-  return (year () + month() + day() +hour() + minute () + second ()+frameCount);
-}
-
 void drawFilles ()
 {
   fill (bgColor);
-  //fill (random (50, 200));
   noStroke();
-
-  //float noiseValue;
-  //float time = 0.0;
   
-  float x = margin;
+  float x_filles = margin;
+  float y_filles = 0;
   
   beginShape ();
-
   vertex (margin, height-margin);
   
-  while (x < width-margin+1 ){
-    //noiseValue = y - noise (time)*amplitude;
+  while (x_filles < width-margin ){
     
-    vertex (x, y - landscape_data[9][j]/300000*2);    
-    //vertex (x, noiseValue);
+    y_filles = y - landscape_data[9][j]/300000*2;
+    
+    vertex (x_filles, y_filles);
     j++;
-    println(landscape_data[9][int(x)]/100000);
-    //x+= timestampMs_data[9][int(x)]/3000;
-    //x+= landscape_data[9][int(x)]/10000000;
     
-    x+= 15;
-    
-    //time += float(processTimestamp(timestampMs,lastTimestampMs));
-
+    x_filles += map(timestampMs_data[9][j]/3000, 0 , 20, 15, 25);
   }
 
-  vertex (width-margin, y - landscape_data[9][j]/300000*2);
+  vertex (width-margin, y_filles);
 
   i++;
   
@@ -161,22 +125,19 @@ void drawFilles ()
 void drawLines (){
   
   noFill ();
-  //strokeWeight (sw);
 
-  float noiseValue;
-  float x = -abs (versatz);
-  //float time = 0.0;
-
-  while (x < width + abs (versatz))
+  float y_lines;
+  float x_lines = -margin*2;
+  
+  while (x_lines < width + margin*2)
   {
-    noiseValue = y - landscape_data[9][j]/300000*2;
+    y_lines = y - landscape_data[9][j]/300000*2;
     strokeWeight (accuracy_data[9][j]/50);
     stroke (accuracy_data[9][j]/50);
 
-    line (x, noiseValue+3, x + random (noiseValue*0.9, noiseValue), noiseValue+3+height);
+    line (x_lines, y_lines+3, x_lines + y_lines , y_lines+3+height);
 
-    x+= random(2,6);
-    //time += timeSteps;
+    x_lines += map(timestampMs_data[9][j]/3000, 0 , 20, 5, 15);
   }
 }
 
