@@ -21,17 +21,18 @@ int margin = 30;
 
 float x_filles = margin;
 float y_filles = 0;
+float last_y_filles = 0;
 
 void setup ()
 {
-  size (400, 400);
-  //size (400, 400, PDF, "final2.pdf");
+  //size (400, 400);
+  size (400, 400, PDF, "final45.pdf");
   smooth();
   
   background(150);
   Position_to_landscape();
   
-  //exit();
+  exit();
 }
 
 void Position_to_landscape() {
@@ -66,6 +67,7 @@ void Position_to_landscape() {
             println("Begin Shape");
             beginShape ();
             vertex (margin, height-margin);
+            vertex (x_filles, y_filles);
             ShapeIsBegin = true;
             
           } else if(ShapeIsBegin == true && ShapeIsFinish == true){
@@ -83,10 +85,14 @@ void Position_to_landscape() {
             println("Create Vertex");
             
             y_filles = map(longitude/100000, 100,240, 0, 300); //y - longitude/100000
-            vertex (x_filles, y_filles);
-            x_filles += map(processTimestamp(timestampMs, lastTimestampMs)/1000, 0,10, 15, 25);
             
+            if(y_filles != last_y_filles){
+              vertex (x_filles, y_filles);
+              last_y_filles = y_filles;
+              
+              x_filles += map(processTimestamp(timestampMs, lastTimestampMs)/1000, 0,10, 15, 25);
             //x_filles += processTimestamp(timestampMs, lastTimestampMs)/1000;
+            }
             
             
             if(x_filles > width-margin){
@@ -116,44 +122,7 @@ void Position_to_landscape() {
   drawMargin();
 }
 
-/*void drawFilles (color bg){
-  fill (random(0, 200),random(0, 200),random(0, 200));
-  noStroke();
-
-  //float x_filles = margin;
-  //float y_filles = 0;
-
-  beginShape ();
-  vertex (margin, height-margin);
-
-  while (x_filles < width-margin ) {
-
-    //try{y_filles = map(y - landscape_data[static_month][j]/300000*2, -200,200, -1000, 2000);}catch(Exception e){}
-    try {
-      y_filles = map(y - timestampMs_data[static_month][j]/3000, -200, 300, -1000, 2000);
-    }
-    catch(Exception e) {
-    }
-
-    vertex (x_filles, y_filles);
-    j++;
-
-    try {
-      x_filles += map(timestampMs_data[static_month][j]/3000, 0, 20, 15, 25);
-    }
-    catch(Exception e) {
-    }
-  }
-
-  vertex (width-margin, y_filles);
-
-  i++;
-
-  vertex (width-margin, height-margin);
-  endShape();
-}
-
-void drawLines () {
+/*void drawLines () {
 
   noFill ();
 
