@@ -2,6 +2,7 @@
 import java.text.SimpleDateFormat;
 
 int month, day;
+int lastMonth = 0;
 
 int processTimestamp(String timestampMs, String lastTimestampMs){
   
