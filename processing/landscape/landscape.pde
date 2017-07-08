@@ -8,26 +8,14 @@ String position_history_file = "Albertine_Meunier_2016_janvier.json";
 String     timestampMs = "1489432985771";
 String lastTimestampMs = "1489432985771";
 
-int nb_month = 20;
-int nb_days = 158000;
-int[][] landscape_data = new int[nb_month][nb_days];
-//int[][] latitude_data = new int[nb_month][nb_days];
-int[][] accuracy_data = new int[nb_month][nb_days];
-float[][] timestampMs_data = new float[nb_month][nb_days];
-
-int static_month = 12; //9 pierre
 boolean firstTime = true;
 boolean ShapeIsBegin = false;
+boolean ShapeIsFinish = false;
 
 //------- CONFIG LANDSCAPE ---------
-float y = 80;
+float y;
 color bgColor = 255;
 int margin = 30;
-
-boolean doReDraw = true;
-
-int i = 0;
-int j = 0;
 
 //------- LANDSCAPE DATA ---------
 
@@ -40,14 +28,13 @@ void setup ()
   //size (400, 400, PDF, "final2.pdf");
   smooth();
   
-  background(bgColor);
+  background(150);
   Position_to_landscape();
   
   //exit();
 }
 
 void Position_to_landscape() {
-  //background(255);
   GooglePositionHistory = loadJSONArray(position_history_file);
 
   for (int i = GooglePositionHistory.size()-1; i > 0; i--) {
@@ -56,7 +43,6 @@ void Position_to_landscape() {
     JSONObject locations = GooglePositionHistory.getJSONObject(i);
 
     int accuracy = locations.getInt("accuracy");
-
     int latitude = locations.getInt("latitudeE7");
     int longitude = locations.getInt("longitudeE7");
 
@@ -67,69 +53,70 @@ void Position_to_landscape() {
     if(firstTime == true){
       y = accuracy;
       firstTime = false;
-    } else {
-      if(y < height){
-        
+    } 
+    
+    if(y < height-margin){
+        //------- CHECK MONTH DATA -----------
         if(month == lastMonth){
-          
           //------- GENERATE LANDSCAPE FROM JSON DATA ---------
-          fill (random(150, 200),random(150, 200),random(150, 200));
-          noStroke();
-          
           if(ShapeIsBegin != true){
+            fill (random(150, 200),random(150, 200),random(150, 200));
+            noStroke();
+            
+            println("Begin Shape");
             beginShape ();
             vertex (margin, height-margin);
             ShapeIsBegin = true;
-          } else {
             
-            y_filles = map(y - timestampMs_data[static_month][j]/3000, -200, 300, -1000, 2000);
+          } else if(ShapeIsBegin == true && ShapeIsFinish == true){
+            
+            println("End Shape");
+            
+            vertex (width-margin, y_filles);
+            vertex (width-margin, height-margin);
+            endShape();
+            
+            ShapeIsBegin = false;
+            ShapeIsFinish = false;
+            
+          } else {
+            println("Create Vertex");
+            
+            y_filles = map(longitude/100000, 100,240, 0, 300); //y - longitude/100000
             vertex (x_filles, y_filles);
-            j++;
-            x_filles += map(timestampMs_data[static_month][j]/3000, 0, 20, 15, 25);
-          
-          }
-          
-        
-          
-        
-          /*while (x_filles < width-margin ) {
-
-          
-          }*/
-
-          vertex (width-margin, y_filles);
-
-          i++;
-        
-          vertex (width-margin, height-margin);
-          endShape();
-  
-          //drawFilles(int(random(150, 200))); //bgColor
-          //drawLines();
-          
-          lastMonth = month;
-          
-        } else {
-          y+= accuracy; //map ???
-          lastMonth = month;
+            x_filles += map(processTimestamp(timestampMs, lastTimestampMs)/1000, 0,10, 15, 25);
+            
+            //x_filles += processTimestamp(timestampMs, lastTimestampMs)/1000;
+            
+            
+            if(x_filles > width-margin){
+              ShapeIsFinish = true;
+              x_filles = margin;
+            }
         }
+        //lastMonth = month;
+      } else {
+        y+= accuracy; //map ???
+        lastMonth = month;
+        
+        //close shape ?
+        /*println("End Shape");
+            
+        vertex (width-margin, y_filles);
+        vertex (width-margin, height-margin);
+        endShape();
+            
+        ShapeIsBegin = false;
+        ShapeIsFinish = false;*/
       }
     }
-    
-    landscape_data[month][i] = longitude;
-    //latitude_data[month][i] = latitude;
-    accuracy_data[month][i] = accuracy;
-    timestampMs_data[month][i] = processTimestamp(timestampMs, lastTimestampMs);
-
-    //println(month);
-
     //lastTimestampMs = timestampMs;
   }
   println("FINISH !");
   drawMargin();
 }
 
-void drawFilles (color bg){
+/*void drawFilles (color bg){
   fill (random(0, 200),random(0, 200),random(0, 200));
   noStroke();
 
@@ -166,7 +153,7 @@ void drawFilles (color bg){
   endShape();
 }
 
-/*void drawLines () {
+void drawLines () {
 
   noFill ();
 
