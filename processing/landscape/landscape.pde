@@ -2,20 +2,20 @@ import processing.pdf.*;
 
 //------- JSON DATA ---------
 JSONArray GooglePositionHistory;
-String position_history_file = "Albertine_Meunier_2016.json";
+String position_history_file = "Albertine_Meunier_2016_janvier.json";
 //String position_history_file = "pierre.json";
 
 String     timestampMs = "1489432985771";
 String lastTimestampMs = "1489432985771";
 
-int nb_month = 1000;
+int nb_month = 20;
 int nb_days = 158000;
 int[][] landscape_data = new int[nb_month][nb_days];
 //int[][] latitude_data = new int[nb_month][nb_days];
 int[][] accuracy_data = new int[nb_month][nb_days];
 float[][] timestampMs_data = new float[nb_month][nb_days];
 
-int static_month = 1; //9 pierre
+int static_month = 12; //9 pierre
 
 //------- CONFIG LANDSCAPE ---------
 float y = 80;
@@ -57,7 +57,7 @@ void generate_landscape(){
   while (y < height){
     
     drawFilles();
-    drawLines();
+    //drawLines();
     
     y+= accuracy_data[static_month][i+1];
   }
@@ -101,8 +101,8 @@ void mousePressed ()
 
 void drawFilles ()
 {
-  fill (bgColor);
-  //fill (random(50,200));
+  //fill (bgColor);
+  fill (random(50,200));
   noStroke();
   
   float x_filles = margin;
@@ -113,8 +113,10 @@ void drawFilles ()
   
   while (x_filles < width-margin ){
     
-    try{y_filles = map(y - landscape_data[static_month][j]/300000*2, -200,200, -1000, 2000);}catch(Exception e){}
+    //try{y_filles = map(y - landscape_data[static_month][j]/300000*2, -200,200, -1000, 2000);}catch(Exception e){}
+    try{y_filles = map(y - timestampMs_data[static_month][j]/3000, -200,300, -1000, 2000);}catch(Exception e){}
     
+    //println(y - timestampMs_data[static_month][j]/3000);
     vertex (x_filles, y_filles);
     j++;
     
