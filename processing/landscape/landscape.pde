@@ -1,9 +1,20 @@
+/* ----------------------------------------------------------------------------------------------------
+ * Google Position History to GRAPHIC, 2017
+ * Update: 08/07/17
+ *
+ * TODO : Check Month & Draw Lines
+ *
+ * V0.5
+ * Written by Bastien DIDIER
+ * ----------------------------------------------------------------------------------------------------
+ */
 import processing.pdf.*;
 
 //------- JSON DATA ---------
 JSONArray GooglePositionHistory;
-String position_history_file = "Albertine_Meunier_2016_janvier.json";
+//String position_history_file = "Albertine_Meunier_2016_janvier.json";
 //String position_history_file = "pierre.json";
+String position_history_file = "Gautier_Raguenaud_2016.json";
 
 String     timestampMs = "1489432985771";
 String lastTimestampMs = "1489432985771";
@@ -14,22 +25,22 @@ boolean ShapeIsFinish = false;
 
 //------- CONFIG LANDSCAPE ---------
 float y;
-color bgColor = 255;
 int margin = 30;
+int landscape_count = 0;
+int month_count = 0;
 
-//------- LANDSCAPE DATA ---------
-
-float x_filles = margin;
-float y_filles = 0;
-float last_y_filles = 0;
+//------- LANDSCAPE DATA -----------
+float x_landscape = margin;
+float y_landscape = 0;
+float last_y_landscape = 0;
 
 void setup ()
 {
   //size (400, 400);
-  size (400, 400, PDF, "final45.pdf");
+  size(400, 400, PDF, "export.pdf");
   smooth();
   
-  background(150);
+  background(197,230,255);
   Position_to_landscape();
   
   exit();
@@ -49,7 +60,9 @@ void Position_to_landscape() {
 
     timestampMs = locations.getString("timestampMs");
     //timestampMs = str(locations.getInt("timestampMs"));
-
+    
+    //println(month);
+    
     //------- PROCESS JSON DATA ---------
     if(firstTime == true){
       y = accuracy;
@@ -57,89 +70,68 @@ void Position_to_landscape() {
     } 
     
     if(y < height-margin){
-        //------- CHECK MONTH DATA -----------
-        if(month == lastMonth){
-          //------- GENERATE LANDSCAPE FROM JSON DATA ---------
-          if(ShapeIsBegin != true){
-            fill (random(150, 200),random(150, 200),random(150, 200));
-            noStroke();
+      
+      //------- CHECK MONTH DATA -----------
+      if(month == lastMonth && landscape_count < 12){
+      
+        //------- GENERATE LANDSCAPE FROM JSON DATA ---------
+        if(ShapeIsBegin != true){
+          fill (random(0, 200),random(150, 255),random(50, 200));
+          noStroke();
+    
+          //println("Begin Shape");
+          beginShape ();
+          vertex (margin, height-margin);
+          vertex (x_landscape, y_landscape);
+          ShapeIsBegin = true;
             
-            println("Begin Shape");
-            beginShape ();
-            vertex (margin, height-margin);
-            vertex (x_filles, y_filles);
-            ShapeIsBegin = true;
+        } else if(ShapeIsBegin == true && ShapeIsFinish == true){
             
-          } else if(ShapeIsBegin == true && ShapeIsFinish == true){
+          //println("End Shape");
             
-            println("End Shape");
+          vertex (width-margin, y_landscape);
+          vertex (width-margin, height-margin);
+          endShape(CLOSE);
             
-            vertex (width-margin, y_filles);
-            vertex (width-margin, height-margin);
-            endShape();
+          ShapeIsBegin = false;
+          ShapeIsFinish = false;
+          landscape_count++;
+          
+        } else {
+          //println("Create Vertex");
             
-            ShapeIsBegin = false;
-            ShapeIsFinish = false;
+          y_landscape = map(longitude/100000, 100,240, 100, 300); //y - longitude/100000
             
-          } else {
-            println("Create Vertex");
+          if(y_landscape != last_y_landscape && y_landscape > margin){
+            vertex (x_landscape, y_landscape);
+            last_y_landscape = y_landscape;
             
-            y_filles = map(longitude/100000, 100,240, 0, 300); //y - longitude/100000
+            //TODO DRAW LINE
+            //noFill ();
+            //strokeWeight(1);
+            //stroke(0);
+            //line (x_landscape, y_landscape, x_landscape, y_landscape+50);
             
-            if(y_filles != last_y_filles){
-              vertex (x_filles, y_filles);
-              last_y_filles = y_filles;
-              
-              x_filles += map(processTimestamp(timestampMs, lastTimestampMs)/1000, 0,10, 15, 25);
-            //x_filles += processTimestamp(timestampMs, lastTimestampMs)/1000;
-            }
-            
-            
-            if(x_filles > width-margin){
-              ShapeIsFinish = true;
-              x_filles = margin;
-            }
+            x_landscape += map(processTimestamp(timestampMs, lastTimestampMs)/1000, 0,10, 10, 20); //15/25
+          }
+          
+          if(x_landscape > width-margin){
+            ShapeIsFinish = true;
+            x_landscape = margin;
+          }
         }
         //lastMonth = month;
       } else {
-        y+= accuracy; //map ???
+        y += accuracy;
         lastMonth = month;
+        month_count++;
         
-        //close shape ?
-        /*println("End Shape");
-            
-        vertex (width-margin, y_filles);
-        vertex (width-margin, height-margin);
-        endShape();
-            
-        ShapeIsBegin = false;
-        ShapeIsFinish = false;*/
+        println("YO");
       }
     }
     //lastTimestampMs = timestampMs;
   }
+  println("Month Count : "+month_count);
   println("FINISH !");
   drawMargin();
 }
-
-/*void drawLines () {
-
-  noFill ();
-
-  float y_lines;
-  float x_lines = -margin*2;
-
-  while (x_lines < width + margin*2)
-  {
-    //y_lines = y - landscape_data[static_month][j]/300000*2;
-    y_lines = map(y - landscape_data[static_month][j]/300000*2, -200, 200, -1000, 2000);
-    //y_lines = map(y - timestampMs_data[static_month][j]/3000, -200,300, -1000, 2000);
-
-    strokeWeight (accuracy_data[static_month][j]/50);
-    stroke (accuracy_data[static_month][j]/50);
-
-    line (x_lines, y_lines+3, x_lines + y_lines, y_lines+3+height);
-
-    x_lines += map(timestampMs_data[static_month][j]/3000, 0, 20, 5, 15);
-  }
-}*/
