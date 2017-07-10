@@ -14,7 +14,7 @@ import processing.pdf.*;
 JSONArray GooglePositionHistory;
 //String position_history_file = "Albertine_Meunier_2016_janvier.json";
 //String position_history_file = "pierre.json";
-String position_history_file = "Gautier_Raguenaud_2016.json";
+String position_history_file = "Valentina_Peri_2016.json";
 
 String     timestampMs = "1489432985771";
 String lastTimestampMs = "1489432985771";
