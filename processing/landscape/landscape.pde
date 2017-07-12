@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------------------------------
  * Google Position History to GRAPHIC, 2017
- * Update: 08/07/17
+ * Update: 12/07/17
  *
  * TODO : Check Month & Draw Lines
  *
@@ -12,9 +12,7 @@ import processing.pdf.*;
 
 //------- JSON DATA ---------
 JSONArray GooglePositionHistory;
-//String position_history_file = "Albertine_Meunier_2016_janvier.json";
-//String position_history_file = "pierre.json";
-String position_history_file = "Valentina_Peri_2016.json";
+String position_history_file = "Gautier_Raguenaud_2016_decembre.json";
 
 String     timestampMs = "1489432985771";
 String lastTimestampMs = "1489432985771";
@@ -28,22 +26,24 @@ float y;
 int margin = 30;
 int landscape_count = 0;
 int month_count = 0;
+int amplitude = 12 ; //1 > 100
 
 //------- LANDSCAPE DATA -----------
 float x_landscape = margin;
+float last_x_landscape = margin;
 float y_landscape = 0;
 float last_y_landscape = 0;
 
 void setup ()
 {
-  //size (400, 400);
-  size(400, 400, PDF, "export.pdf");
+  size (400, 400);
+  //size(400, 400, PDF, "export.pdf");
   smooth();
   
   background(197,230,255);
   Position_to_landscape();
   
-  exit();
+  //exit();
 }
 
 void Position_to_landscape() {
@@ -65,18 +65,22 @@ void Position_to_landscape() {
     
     //------- PROCESS JSON DATA ---------
     if(firstTime == true){
-      y = accuracy;
+      y = accuracy/amplitude;
       firstTime = false;
     } 
     
-    if(y < height-margin){
+    if(y < height-margin){  
       
       //------- CHECK MONTH DATA -----------
       if(month == lastMonth && landscape_count < 12){
-      
+        
+        float r = random(0, 200);
+        float v = random(150, 255);
+        float b = random(50, 200);
+          
         //------- GENERATE LANDSCAPE FROM JSON DATA ---------
         if(ShapeIsBegin != true){
-          fill (random(0, 200),random(150, 255),random(50, 200));
+          fill (r,v,b);
           noStroke();
     
           //println("Begin Shape");
@@ -88,7 +92,6 @@ void Position_to_landscape() {
         } else if(ShapeIsBegin == true && ShapeIsFinish == true){
             
           //println("End Shape");
-            
           vertex (width-margin, y_landscape);
           vertex (width-margin, height-margin);
           endShape(CLOSE);
@@ -105,12 +108,26 @@ void Position_to_landscape() {
           if(y_landscape != last_y_landscape && y_landscape > margin){
             vertex (x_landscape, y_landscape);
             last_y_landscape = y_landscape;
+            last_x_landscape = x_landscape;
             
             //TODO DRAW LINE
-            //noFill ();
-            //strokeWeight(1);
-            //stroke(0);
-            //line (x_landscape, y_landscape, x_landscape, y_landscape+50);
+            /*noFill ();
+            strokeWeight(1);
+            stroke(0);
+            line (x_landscape, y_landscape, x_landscape, y_landscape+50);
+            
+            int data = 10; //accuracy
+            for (int j = 0; j <= data; j++) {
+              line(
+                lerp(last_x_landscape, x_landscape, j)+100,
+                lerp(last_y_landscape, y_landscape, j),
+                x_landscape,
+                y_landscape+50
+              );
+            }
+            
+            //fill (r,v,b);
+            noStroke();*/
             
             x_landscape += map(processTimestamp(timestampMs, lastTimestampMs)/1000, 0,10, 10, 20); //15/25
           }
@@ -122,11 +139,9 @@ void Position_to_landscape() {
         }
         //lastMonth = month;
       } else {
-        y += accuracy;
+        y += accuracy/amplitude;
         lastMonth = month;
         month_count++;
-        
-        println("YO");
       }
     }
     //lastTimestampMs = timestampMs;
