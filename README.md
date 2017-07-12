@@ -1,4 +1,4 @@
 ### Google Location History to GRAPHIC
-From Processing via DXF
+From Processing via PDF
 
-Create graphism from google Location History
+Create landscape from google Location History
